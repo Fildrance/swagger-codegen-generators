@@ -1,0 +1,79 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
+using System.Text;
+using System.Threading.Tasks;
+using System.CodeDom.Compiler;
+using {{clientPackage}};
+{{#hasImport}}using {{modelPackage}};
+{{/hasImport}}
+
+namespace {{apiPackage}};
+
+{{#operations}}
+/// <summary>
+/// Represents a collection of functions to interact with the API endpoints
+/// </summary>
+[GeneratedCode("swagger-codegen", "{{generateorVersion}}")]
+public partial interface I{{classname}}
+{
+    {{#operation}}
+    /// <summary>
+    /// {{summary}} {{notes}}
+    /// </summary>
+    {{#allParams}}/// <param name="{{paramName}}">{{description}}</param>
+    {{/allParams}}/// <param name="ct">Operation cancellation token. </param>
+    /// <returns>{{#returnType}}{{returnType}}{{/returnType}}</returns>
+    {{#returnType}}Task<{{{returnType}}}>{{/returnType}}{{^returnType}}Task{{/returnType}} {{nickname}} ({{#allParams}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/allParams}});
+    {{/operation}}
+}
+
+/// <summary>
+/// Represents a collection of functions to interact with the API endpoints
+/// </summary>  
+[GeneratedCode("swagger-codegen", "{{generateorVersion}}")]
+public partial class {{classname}} : {{apiClientBaseTypeName}}, I{{classname}}
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref="{{classname}}"/> class.
+    /// </summary>
+    /// <param name="httpClient"> HttpClient to be used for calls. </param>
+    /// <param name="basePath"> Base url to be used for calls. </param>
+    public {{classname}}(HttpClient httpClient, String basePath="{{{basePath}}}") : base(httpClient, basePath)
+    {
+    }
+
+    {{#operation}}
+    /// <inheritdoc />     
+    public async {{#returnType}}Task<{{{returnType}}}>{{/returnType}}{{^returnType}}Task{{/returnType}} {{nickname}}({{#allParams}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/allParams}})
+    {
+        {{#allParams}}{{#required}}
+        // verify the required parameter '{{paramName}}' is set
+        if ({{paramName}} == null) throw new {{exceptionTypeName}}(400, "Missing required parameter '{{paramName}}' when calling {{nickname}}");
+        {{/required}}{{/allParams}}
+
+        var path_ = new StringBuilder("{{{path}}}");
+        {{#pathParams}}path_ = path_.Replace("{{=<% %>=}}{<% baseName %>}<%={{ }}=%>", ParameterToString({{{paramName}}}));
+        {{/pathParams}}
+
+        var queryParams = new Dictionary<string, string>();
+        var headerParams = new Dictionary<string, string>();
+        var formParams = new Dictionary<string, string>();
+        var fileParams = new Dictionary<string, FileParameter>();
+        object postBody = null;
+
+        {{#queryParams}} if ({{paramName}} != null) queryParams.Add("{{baseName}}", ParameterToString({{paramName}})); // query parameter
+        {{/queryParams}}{{#headerParams}} if ({{paramName}} != null) headerParams.Add("{{baseName}}", ParameterToString({{paramName}})); // header parameter
+        {{/headerParams}}{{#formParams}}if ({{paramName}} != null) {{#isFile}}fileParams.Add("{{baseName}}", ParameterToFile("{{baseName}}", {{paramName}}));{{/isFile}}{{^isFile}}formParams.Add("{{baseName}}", ParameterToString({{paramName}})); // form parameter{{/isFile}}
+        {{/formParams}}{{#bodyParam}}postBody = {{paramName}}; // http body (model) parameter
+        {{/bodyParam}}
+
+        {{#returnType}}var response = {{/returnType}}await CallApi{{#returnType}}<{{{returnType}}}>{{/returnType}}(path_.ToString(), HttpMethod.{{#lambda.pascalcase}}{{#lambda.lowercase}}{{httpMethod}}{{/lambda.lowercase}}{{/lambda.pascalcase}}, queryParams, postBody, headerParams, formParams, fileParams, ct);{{#returnType}}
+        
+        return response;{{/returnType}}
+    }
+
+    {{/operation}}
+}
+{{/operations}}

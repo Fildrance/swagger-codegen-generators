@@ -10,11 +10,7 @@ import io.swagger.codegen.v3.CodegenOperation;
 import io.swagger.codegen.v3.CodegenProperty;
 import io.swagger.codegen.v3.generators.DefaultCodegenConfig;
 import io.swagger.codegen.v3.generators.handlebars.csharp.CsharpHelper;
-import io.swagger.codegen.v3.generators.handlebars.lambda.CamelCaseLambda;
-import io.swagger.codegen.v3.generators.handlebars.lambda.IndentedLambda;
-import io.swagger.codegen.v3.generators.handlebars.lambda.LowercaseLambda;
-import io.swagger.codegen.v3.generators.handlebars.lambda.TitlecaseLambda;
-import io.swagger.codegen.v3.generators.handlebars.lambda.UppercaseLambda;
+import io.swagger.codegen.v3.generators.handlebars.lambda.*;
 import io.swagger.codegen.v3.generators.util.OpenAPIUtil;
 import io.swagger.codegen.v3.utils.ModelUtils;
 import io.swagger.codegen.v3.utils.URLPathUtil;
@@ -348,6 +344,7 @@ public abstract class AbstractCSharpCodegen extends DefaultCodegenConfig {
                 .put("lowercase", new LowercaseLambda().generator(this))
                 .put("uppercase", new UppercaseLambda())
                 .put("titlecase", new TitlecaseLambda())
+                .put("pascalcase", new PascalCaseLambda().generator(this))
                 .put("camelcase", new CamelCaseLambda().generator(this))
                 .put("camelcase_param", new CamelCaseLambda().generator(this).escapeAsParamName(true))
                 .put("indented", new IndentedLambda())
