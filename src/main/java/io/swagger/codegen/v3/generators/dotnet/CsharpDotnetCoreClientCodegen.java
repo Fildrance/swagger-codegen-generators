@@ -1,6 +1,8 @@
 package io.swagger.codegen.v3.generators.dotnet;
 
 import io.swagger.codegen.v3.*;
+import io.swagger.codegen.v3.generators.DefaultCodegenConfig;
+import io.swagger.v3.oas.models.media.Schema;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -37,7 +39,7 @@ public class CsharpDotnetCoreClientCodegen extends AbstractCSharpCodegen {
         setApiPackage(packageName + ".Api");
         setModelPackage(packageName + ".Model");
         setClientPackage(packageName + ".Client");
-        setSourceFolder("src" + File.separator + "main" + File.separator + "CsharpDotNet2");
+        setSourceFolder("src" + File.separator + "main" + File.separator + "CsharpDotnetCore");
 
         modelDocTemplateFiles.put("model_doc.mustache", ".md");
         apiDocTemplateFiles.put("api_doc.mustache", ".md");
@@ -65,12 +67,6 @@ public class CsharpDotnetCoreClientCodegen extends AbstractCSharpCodegen {
         } else {
             additionalProperties.put(CLIENT_PACKAGE, getClientPackage());
         }
-
-        String generatorVersion = this.getClass().getPackage().getSpecificationVersion();
-        if(generatorVersion == null) {
-            generatorVersion = "1.0";
-        }
-        additionalProperties.put("generateorVersion", generatorVersion);
 
         final String clientPackage = getClientPackage();
 
@@ -131,20 +127,36 @@ public class CsharpDotnetCoreClientCodegen extends AbstractCSharpCodegen {
 
     @Override
     protected void processOperation(CodegenOperation operation) {
+        operation.httpMethod = DefaultCodegenConfig.camelize(operation.httpMethod.toLowerCase(), false);
+
         CodegenParameter cancellationTokenParameter = new CodegenParameter();
         cancellationTokenParameter.dataType = "CancellationToken";
         cancellationTokenParameter.paramName = "ct";
         cancellationTokenParameter.secondaryParam = true;
-        operation.getVendorExtensions().put("x-has-more", false);
+        operation.getVendorExtensions()
+                 .put("x-has-more", false);
 
         if(operation.allParams.size() != 0) {
             CodegenParameter lastParameter = operation.allParams.get(operation.allParams.size() - 1);
-            lastParameter.getVendorExtensions().put("x-has-more", true);
+            lastParameter.getVendorExtensions()
+                         .put("x-has-more", true);
         }
 
         operation.allParams.add(cancellationTokenParameter);
 
         super.processOperation(operation);
+    }
+    @Override
+    public void postProcessModelProperty(CodegenModel model, CodegenProperty property){
+    }
+
+    @Override
+    public String getTypeDeclaration(Schema propertySchema) {
+        String result =  super.getTypeDeclaration(propertySchema);
+        if(result.equals("Dictionary<string, List>")) {
+            result = "Dictionary<string, ArrayList>";
+        }
+        return result;
     }
 
     @Override

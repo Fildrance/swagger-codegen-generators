@@ -17,7 +17,7 @@ namespace {{clientPackage}};
 /// <summary>
 /// Base type for API client is mainly responsible for making the HTTP call to the API.
 /// </summary>
-[GeneratedCode("swagger-codegen", "{{generateorVersion}}")]
+[GeneratedCode("swagger-codegen", "{{generatorVersion}}")]
 public abstract class {{apiClientBaseTypeName}}
 {
     protected readonly HttpClient _httpClient;
@@ -352,6 +352,17 @@ public abstract class {{apiClientBaseTypeName}}
             return new FileParameter(name, stream, Path.GetFileName(fs.Name));
         }
         return new FileParameter(name, stream, "no_file_name_provided");
+    }
+
+    /// <summary>
+    /// Create FileParameter based on Stream.
+    /// </summary>
+    /// <param name="name">Parameter name.</param>
+    /// <param name="stream">Input stream.</param>
+    /// <returns>FileParameter.</returns>
+    public static FileParameter ParameterToFile(string name, byte[] data)
+    {
+        return new FileParameter(name, data, "no_file_name_provided");
     }
 
     private static Dictionary<string, IEnumerable<string>> CollectHeaders(HttpResponseMessage response)
