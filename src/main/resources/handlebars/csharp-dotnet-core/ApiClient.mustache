@@ -56,12 +56,12 @@ public abstract class {{apiClientBaseTypeName}}
     protected virtual async Task<T> CallApi<T>(
         string path, 
         HttpMethod method, 
-        Dictionary<string, string> queryParams, 
-        object body,
-        Dictionary<string, string> headerParams, 
-        Dictionary<string, string> formParams, 
-        Dictionary<string, FileParameter> fileParams, 
-        CancellationToken ct
+        Dictionary<string, string> queryParams = null, 
+        object body = null,
+        Dictionary<string, string> headerParams = null, 
+        Dictionary<string, string> formParams = null, 
+        Dictionary<string, FileParameter> fileParams = null, 
+        CancellationToken ct = default
     )
     {
         using (var request = new HttpRequestMessage())
@@ -87,6 +87,13 @@ public abstract class {{apiClientBaseTypeName}}
             }
             finally
             {
+                if(fileParams != null)
+                {
+                    foreach(var fileParam in fileParams)
+                    {
+                        fileParam.Value.FileData?.Dispose();
+                    }
+                }
                 response?.Dispose();
             }
         }
@@ -106,13 +113,13 @@ public abstract class {{apiClientBaseTypeName}}
     /// <returns>Result of request.</returns>
     protected virtual async Task CallApi(
         string path, 
-        HttpMethod method, 
-        Dictionary<string, string> queryParams, 
-        object body,
-        Dictionary<string, string> headerParams, 
-        Dictionary<string, string> formParams, 
-        Dictionary<string, FileParameter> fileParams, 
-        CancellationToken ct
+        HttpMethod method,
+        Dictionary<string, string> queryParams = null,
+        object body = null,
+        Dictionary<string, string> headerParams = null,
+        Dictionary<string, string> formParams = null,
+        Dictionary<string, FileParameter> fileParams = null,
+        CancellationToken ct = default
     )
     {
         using (var request = new HttpRequestMessage())
@@ -135,6 +142,13 @@ public abstract class {{apiClientBaseTypeName}}
             }
             finally
             {
+                if(fileParams != null)
+                {
+                    foreach(var fileParam in fileParams)
+                    {
+                        fileParam.Value.FileData?.Dispose();
+                    }
+                }
                 response?.Dispose();
             }
         }

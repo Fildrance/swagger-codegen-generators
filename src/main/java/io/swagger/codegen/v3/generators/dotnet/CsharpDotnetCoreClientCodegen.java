@@ -153,10 +153,32 @@ public class CsharpDotnetCoreClientCodegen extends AbstractCSharpCodegen {
     @Override
     public String getTypeDeclaration(Schema propertySchema) {
         String result =  super.getTypeDeclaration(propertySchema);
-        if(result.equals("Dictionary<string, List>")) {
-            result = "Dictionary<string, ArrayList>";
+        int index = result.indexOf("List");
+        while (index >= 0) {
+            if(result.length() == (index + "List".length())) {
+                result = replaceListToArrayListAtIndexes(result, index, index + "List".length());
+                index += "ArrayList".length();
+            } else {
+                char prevChar = '\u0000';
+                if(index != 0){
+                    prevChar = result.charAt(index - 1);
+                }
+                char nextChar = result.charAt(index + "List".length());
+                if(
+                    (prevChar == ' '  || prevChar == ',' || prevChar == '<')
+                        && (nextChar == ',' || nextChar == '>')
+                ) {
+                    result = replaceListToArrayListAtIndexes(result, index, index + "List".length());
+                    index += "ArrayList".length();
+                }
+            }
+            index = result.indexOf("List", index + 1);
         }
         return result;
+    }
+
+    private String replaceListToArrayListAtIndexes(String input, int start, int end) {
+        return input.substring(0, start) + "ArrayList" + input.substring(end, input.length());
     }
 
     @Override
