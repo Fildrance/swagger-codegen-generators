@@ -36,9 +36,6 @@ public class CsharpDotnetCoreClientCodegen extends AbstractCSharpCodegen {
         modelTemplateFiles.put("model.mustache", ".cs");
         apiTemplateFiles.put("api.mustache", ".cs");
 
-        setApiPackage(packageName + ".Api");
-        setModelPackage(packageName + ".Model");
-        setClientPackage(packageName + ".Client");
         setSourceFolder("src" + File.separator + "main" + File.separator + "CsharpDotnetCore");
 
         modelDocTemplateFiles.put("model_doc.mustache", ".md");
@@ -62,6 +59,10 @@ public class CsharpDotnetCoreClientCodegen extends AbstractCSharpCodegen {
 
         sourceFolder = "";
 
+        setApiPackage(packageName + ".Api");
+        setModelPackage(packageName + ".Model");
+        setClientPackage(packageName + ".Client");
+
         if (additionalProperties.containsKey(CLIENT_PACKAGE)) {
             setClientPackage((String) additionalProperties.get(CLIENT_PACKAGE));
         } else {
@@ -83,7 +84,7 @@ public class CsharpDotnetCoreClientCodegen extends AbstractCSharpCodegen {
         additionalProperties.put("apiClientBaseTypeName", apiClientBaseTypeName);
 
         supportingFiles.add(new SupportingFile("ApiException.mustache", "", exceptionTypeName + ".cs"));
-        supportingFiles.add(new SupportingFile("ApiClient.mustache", "", "ApiClient.cs"));
+        supportingFiles.add(new SupportingFile("ApiClient.mustache", "", apiClientBaseTypeName + ".cs"));
         supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
 
         if (additionalProperties.containsKey(USE_CSPROJ_FILE) && Boolean.parseBoolean(additionalProperties.get(USE_CSPROJ_FILE).toString())) {
