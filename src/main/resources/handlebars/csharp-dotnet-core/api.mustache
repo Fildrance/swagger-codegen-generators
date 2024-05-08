@@ -50,21 +50,18 @@ public partial class {{classname}} : {{apiClientBaseTypeName}}, I{{classname}}
         {{#allParams}}{{#required}}// verify the required parameter '{{paramName}}' is set
         if ({{paramName}} == null) throw new {{exceptionTypeName}}(400, "Missing required parameter '{{paramName}}' when calling {{nickname}}");
         {{/required}}{{/allParams}}
-        var path_ = new StringBuilder("{{{path}}}");
-        {{#pathParams}}path_ = path_.Replace("{{=<% %>=}}{<% baseName %>}<%={{ }}=%>", ParameterToString({{{paramName}}}));
-        {{/pathParams}}
+        var path_ = new StringBuilder("{{{path}}}"); {{#pathParams}}
+        path_ = path_.Replace("{{=<% %>=}}{<% baseName %>}<%={{ }}=%>", ParameterToString({{{paramName}}}));{{/pathParams}}
 
         {{#queryParams.0}}var queryParams = new Dictionary<string, string>();
         {{/queryParams.0}}{{#headerParams.0}}var headerParams = new Dictionary<string, string>();
         {{/headerParams.0}}{{#formParams.0}}var formParams = new Dictionary<string, string>();
         {{/formParams.0}}{{#formParams.0}}var fileParams = new Dictionary<string, FileParameter>();
-        {{/formParams.0}}
-
-        {{#queryParams}} if ({{paramName}} != null) queryParams.Add("{{baseName}}", ParameterToString({{paramName}})); // query parameter
-        {{/queryParams}}{{#headerParams}} if ({{paramName}} != null) headerParams.Add("{{baseName}}", ParameterToString({{paramName}})); // header parameter
-        {{/headerParams}}{{#formParams}}if ({{paramName}} != null) {{#isFile}}fileParams.Add("{{baseName}}", ParameterToFile("{{baseName}}", {{paramName}}));{{/isFile}}{{^isFile}}formParams.Add("{{baseName}}", ParameterToString({{paramName}})); // form parameter{{/isFile}}
-        {{/formParams}}
-
+        {{/formParams.0}}{{#queryParams}} 
+        if ({{paramName}} != null) queryParams.Add("{{baseName}}", ParameterToString({{paramName}})); // query parameter{{/queryParams}}{{#headerParams}}
+        if ({{paramName}} != null) headerParams.Add("{{baseName}}", ParameterToString({{paramName}})); // header parameter{{/headerParams}}{{#formParams}}
+        if ({{paramName}} != null) {{#isFile}}fileParams.Add("{{baseName}}", ParameterToFile("{{baseName}}", {{paramName}}));{{/isFile}}{{^isFile}}formParams.Add("{{baseName}}", ParameterToString({{paramName}})); // form parameter{{/isFile}}{{/formParams}}
+        
         {{#returnType}}var response = {{/returnType}}await CallApi{{#returnType}}<{{{returnType}}}>{{/returnType}}(
                     path_.ToString(), 
                     HttpMethod.{{httpMethod}},{{#queryParams.0}}
