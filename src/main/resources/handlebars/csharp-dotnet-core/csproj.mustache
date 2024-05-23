@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>{{targetFramework}}</TargetFramework>
+    <RootNamespace>{{clientPackage}}</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Nuget Package Metadata -->
+    <PackageId>{{packageName}}</PackageId>
+    <PackageVersion>{{packageVersion}}</PackageVersion>
+    <Authors>{{packageAuthors}}</Authors>
+    <Owners>{{packageCompany}}</Owners>
+    <Title>{{packageTitle}}</Title>
+    <Description>{{packageDescription}}</Description>
+    <Copyright>{{packageCopyright}}</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
+  </ItemGroup>
+</Project>

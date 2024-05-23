@@ -1,0 +1,45 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.CodeDom.Compiler;
+using System.Text;
+using System.Text.Json.Serialization;
+
+{{#models}}
+{{#model}}
+namespace {{package}};
+
+/// <summary>
+/// {{description}}
+/// </summary>
+[GeneratedCode("swagger-codegen", "{{generatorVersion}}")]
+public partial class {{classname}}{{#parent}} : {{{parent}}}{{/parent}} 
+{
+    {{#vars}}
+    /// <summary>
+    /// {{^description}}Gets or Sets {{{name}}}{{/description}}{{#description}}{{{description}}}{{/description}}
+    /// </summary>{{#description}}
+    /// <value>{{{description}}}</value>{{/description}}
+    [JsonPropertyName("{{baseName}}")]
+    public {{{datatype}}} {{name}} { get; set; }
+    
+    {{/vars}}
+    
+    /// <summary>
+    /// Get the string presentation of the object
+    /// </summary>
+    /// <returns>String presentation of the object</returns>
+    public override string ToString()  
+    {
+      var sb = new StringBuilder();
+      sb.Append("class {{classname}} {\n");
+      {{#vars}}
+      sb.Append("  {{name}}: ").Append({{name}}).Append("\n");
+      {{/vars}}
+      sb.Append("}\n");
+      return sb.ToString();
+    }
+    
+    {{/model}}
+    {{/models}}
+}
