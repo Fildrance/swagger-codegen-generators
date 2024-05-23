@@ -1,6 +1,12 @@
 package io.swagger.codegen.v3.generators.dotnet;
 
-import io.swagger.codegen.v3.*;
+import io.swagger.codegen.v3.CliOption;
+import io.swagger.codegen.v3.CodegenConstants;
+import io.swagger.codegen.v3.CodegenModel;
+import io.swagger.codegen.v3.CodegenOperation;
+import io.swagger.codegen.v3.CodegenParameter;
+import io.swagger.codegen.v3.CodegenProperty;
+import io.swagger.codegen.v3.SupportingFile;
 import io.swagger.codegen.v3.generators.DefaultCodegenConfig;
 import io.swagger.v3.oas.models.media.Schema;
 
@@ -13,15 +19,13 @@ import java.util.Map;
 public class CsharpDotnetCoreClientCodegen extends AbstractCSharpCodegen {
     public static final String CLIENT_PACKAGE = "clientPackage";
     public static final String USE_CSPROJ_FILE = "useCsProjFile";
-    public static final String DefaultargetFramwork = "net8.0";
+    public static final String DefaultTargetFramework = "net8.0";
     protected String clientPackage = "IO.Swagger.Client";
     protected String systemTextJsonVersion = "8.0.3";
-    protected String apiDocPath = "docs";
-    protected String modelDocPath = "docs";
+    protected String apiDocPath = "docs/clients";
+    protected String modelDocPath = "docs/models";
 
     protected Map<String, String> versions = new HashMap<>();
-    protected String exceptionTypeName;
-    protected String apiClientBaseTypeName;
 
     public CsharpDotnetCoreClientCodegen() {
         super();
@@ -91,7 +95,7 @@ public class CsharpDotnetCoreClientCodegen extends AbstractCSharpCodegen {
             supportingFiles.add(new SupportingFile("csproj.mustache", "", clientPackage + ".csproj"));
         }
         if(!additionalProperties.containsKey(CodegenConstants.DOTNET_FRAMEWORK)) {
-            additionalProperties.put(CodegenConstants.DOTNET_FRAMEWORK, DefaultargetFramwork);
+            additionalProperties.put(CodegenConstants.DOTNET_FRAMEWORK, DefaultTargetFramework);
         }
         String version =  additionalProperties.get(CodegenConstants.DOTNET_FRAMEWORK).toString();
         boolean contains = versions.containsKey(version);
