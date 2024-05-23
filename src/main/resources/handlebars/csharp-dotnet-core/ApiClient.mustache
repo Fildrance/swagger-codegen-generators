@@ -77,7 +77,7 @@ namespace {{clientPackage}}
                     var status = (int)response.StatusCode;
                     if (status is >= 200 and < 300)
                     {
-                        return await ReadObjectResponseAsync<T>(response, headers, ct).ConfigureAwait(false);
+                        return await DeserializeResponse<T>(response, headers, ct).ConfigureAwait(false);
                     }
                     else
                     {
@@ -245,27 +245,12 @@ namespace {{clientPackage}}
             request.RequestUri = new Uri(url, UriKind.RelativeOrAbsolute);
         }
                 
-        public bool ReadResponseAsString { get; set; }
-
-        protected virtual async Task<T> ReadObjectResponseAsync<T>(
+        protected virtual async Task<T> DeserializeResponse<T>(
             HttpResponseMessage response, 
             IReadOnlyDictionary<string, IEnumerable<string>> headers,
             CancellationToken ct
         )
         {
-            if (ReadResponseAsString)
-            {
-                var responseText = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-                try
-                {
-                    return JsonSerializer.Deserialize<T>(responseText, _options);
-                }
-                catch (JsonException exception)
-                {
-                    var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
-                    throw new {{exceptionTypeName}}((int)response.StatusCode, message, responseText, headers, exception);
-                }
-            }
             try
             {
                 using (var responseStream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false))
@@ -277,6 +262,24 @@ namespace {{clientPackage}}
             {
                 var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
                 throw new {{exceptionTypeName}}((int)response.StatusCode, message, string.Empty, headers, exception);
+            }
+        }
+
+        protected virtual async Task<T> DeserializeResponseAsString<T>(
+            HttpResponseMessage response, 
+            IReadOnlyDictionary<string, IEnumerable<string>> headers,
+            CancellationToken ct
+        )
+        {
+            var responseText = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+            try
+            {
+                return JsonSerializer.Deserialize<T>(responseText, _options);
+            }
+            catch (JsonException exception)
+            {
+                var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
+                throw new {{exceptionTypeName}}((int)response.StatusCode, message, responseText, headers, exception);
             }
         }
 
@@ -409,8 +412,14 @@ namespace {{clientPackage}}
         }
     }
 
+    /// <summary>
+    /// Wrapper for HttpRequest parameter that is represented by file.
+    /// </summary>
     public class FileParameter
     {
+        /// <summary>
+        /// Wrapper for HttpRequest parameter that is represented by file.
+        /// </summary>
 	    public FileParameter(string parameterName, Stream fileData, string fileName, string contentType = null) 
 	    {
 		    ParameterName = parameterName;
@@ -419,13 +428,31 @@ namespace {{clientPackage}}
 		    ContentType = contentType;
 	    }
 
+        /// <summary>
+        /// Wrapper for HttpRequest parameter that is represented by file.
+        /// </summary>
 	    public FileParameter(string parameterName, byte[] fileData, string fileName, string contentType = null) : this(parameterName, new MemoryStream(fileData), fileName, contentType)
 	    {
 	    }
-													
+		
+        /// <summary>
+        /// Stream of file data.
+        /// </summary>    
 	    public Stream FileData { get; }
+
+        /// <summary>
+        /// File name to be used in upload.
+        /// </summary>
 	    public string FileName { get; }
+
+        /// <summary>
+        /// Name of parameter that file will be passed as.
+        /// </summary>
 	    public string ParameterName { get; }
+
+        /// <summary>
+        /// MimeType for file.
+        /// </summary>
 	    public string ContentType { get; }
     }
 }

@@ -20,7 +20,10 @@ namespace {{clientPackage}}
         /// <value>The error content (Http response body).</value>
         public Object ErrorContent { get; private set; }
     
-        public IReadOnlyDictionary<string, IEnumerable<string>> Headers{get; private set;}  
+        /// <summary>
+        /// Headers, used in failed request.
+        /// </summary>
+        public IReadOnlyDictionary<string, IEnumerable<string>> Headers {get; private set; }  
     
         /// <summary>
         /// Initializes a new instance of the <see cref="{{exceptionTypeName}}"/> class.
